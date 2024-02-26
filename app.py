@@ -2,7 +2,34 @@ import pickle
 import streamlit as st
 import pandas as pd
 import requests
+import base64
 
+def set_bg_hack(main_bg):
+    '''
+    A function to unpack an image from root folder and set as bg.
+
+    Returns
+    -------
+    The background.
+    '''
+    # set bg name
+    main_bg_ext = "pic.png"
+
+    st.markdown(
+        f"""
+         <style>
+         .stApp {{
+             background: url(data:image/{main_bg_ext};base64,{base64.b64encode(open(main_bg, "rb").read()).decode()});
+             background-size: cover
+         }}
+         </style>
+         """,
+        unsafe_allow_html=True
+    )
+
+
+side_bg = 'film1.jpeg'
+set_bg_hack(side_bg)
 def fetch_poster(movie_id):
     response = requests.get("https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id))
     data = response.json()
@@ -30,9 +57,9 @@ movies = pd.DataFrame(movies_dict)
 
 similarity = pickle.load(open('similarity.pkl.bak','rb'))
 
-st.title('Movie Recommender System')
+st.title(':red[Movie Recommender System]')
 
-selected_movie_name = st.selectbox('Type or select a movie from the dropdown',movies['title'].values)
+selected_movie_name = st.selectbox(':green[Type or select a movie from the dropdown]',movies['title'].values)
 
 if st.button('Recommend'):
    names,posters = recommend(selected_movie_name)
